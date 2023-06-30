@@ -1,0 +1,51 @@
+#Subscription ID
+
+
+variable "subscription_id" {
+
+  
+description = "Azure Cloud subscription id"
+
+
+
+#Tenant ID
+
+
+ variable "tenant_id" { 
+ description = "Azure Cloud tenant id"
+
+
+
+# Client ID
+
+
+ variable "client_id" {
+
+ 
+description = "Service principal client id"
+
+
+
+#Client Secret
+ 
+
+variable "client_secret" {
+
+
+ description = "Service principal client secret"
+
+
+
+#Resource Group Name
+
+
+ variable "resource_group_name" {
+
+
+ description = "The name of the resource group in which the resources will be created"
+
+
+#Location
+
+
+ 

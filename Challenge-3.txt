@@ -1,0 +1,91 @@
+Poweshell Approach:
+function NestedObjectValue {
+    param (
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [object]$Object,
+        
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$Key
+    )
+    
+    $keys = $Key.Split('.')
+    $value = $Object
+
+    foreach ($key in $keys) {
+        if ($value -isnot [System.Management.Automation.PSCustomObject]) {
+            Write-Host "Invalid key: $Key"
+            return $null
+        }
+        
+        if ($value.$key -eq $null) {
+            Write-Host "Key not found: $Key"
+            return $null
+        }
+        
+        $value = $value.$key
+    }
+
+    return $value
+}
+EXAMPLE:-
+# Define a nested object
+$nestedObject = @{
+    obj1 = @{
+        obj2= @{
+            obj3= "Value"
+        }
+    }
+}
+
+# Here Call the function to retrieve the value
+$result = NestedObjectValue -Object $nestedObject -Key "obj1.obj2.obj3"
+
+# Display the result
+Write-Host "Value: $result"
+###############################################################
+
+Python Approach:-
+def get_value_from_nested_object(obj, key):
+
+  keys = key.split('/')  # Split the key into individual keys
+    
+    
+
+   for i in keys:
+  
+       if isinstance(obj, dict) and i in obj:
+            
+        obj = obj[i]  # Update obj to the value at key i
+        
+      else:
+            
+         return None  # Return None if key is not found
+    
+    
+   return obj
+
+
+
+# Example usage
+
+ nested_object = 
+     {
+'a': {
+        
+         'b': {
+            
+           'c':'d'
+        
+         }
+    
+      }
+}
+
+
+nested_key = 'a/b/c'
+
+value = get_value_from_nested_object(nested_object, nested_key)
+
+print(value)  # Output: d

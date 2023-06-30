@@ -1,0 +1,77 @@
+#Provider
+
+ provider "azurern"
+{
+subscription_id
+  =
+"$(var.subscription_id)"
+
+tenant_id        = "$(var.tenant_id)"
+
+client_id        = "$(var.client_id)"
+
+client_secret    ="$(var.client_secret)"
+}  
+
+# Create resource group Details
+resource "azurerm_resource_group" "example" {
+  name     = "my-resource-group"
+  location = "East US"
+}
+
+# Create virtual network Details
+resource "azurerm_virtual_network" "example" {
+  name                = "my-vnet"
+  resource_group_name = azurerm_resource_group.example.name
+  address_space       = ["10.0.0.0/16"]
+}
+
+# Create subnets Details
+resource "azurerm_subnet" "my-app" {
+  name                 = "app-subnet"
+  resource_group_name  = azurerm_resource_group.example.name
+  virtual_network_name = azurerm_virtual_network.example.name
+  address_prefixes     = ["10.0.2.0/24"]
+}
+
+# Create virtual machines Details
+resource "azurerm_linux_virtual_machine" "web" {
+  name                = "web-vm"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
+  size                = "Standard_B1s"
+  admin_username      = "adminuser"
+  admin_password      = "adminpassword"
+  network_interface_ids = [
+    azurerm_network_interface.web.id,
+  ]
+}
+
+# Create virtual machines Details
+resource "azurerm_linux_virtual_machine" "my-vm" {
+  name                = "app-vm"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
+  size                = "Standard_B2s"
+  admin_username      = "XYZadminuser"
+  admin_password      = "XYZ@123"
+  network_interface_ids = [
+    azurerm_network_interface.app.id,
+  ]
+}
+
+# Create database Details
+resource "azurerm_mariadb_server" "db" {
+  name                = "my-db-server"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+  sku_name            = "B_Gen5_1"
+  storage_mb          = 5120
+  version             = "10.3"
+  administrator_login = "dbadmin"
+  administrator_password = "dbpassword"
+  auto_grow_enabled   = true
+  backup_retention_days = 7
+  geo_redundant_backup_enabled = false
+  sku_capacity        = 2
+}

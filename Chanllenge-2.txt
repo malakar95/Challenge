@@ -1,0 +1,45 @@
+Challenge #2
+We need to write code that will query the meta data of an instance within AWS or Azure or GCP and provide a json formatted output. 
+
+######################Approach 1################################
+Query:- Here we have to invokr the RestMethod below are the commands:-
+
+>>Invoke-RestMethod -Headers @{"Metadata"="true"} -Method GET -NoProxy -Uri "http://168.254.168.253/metadata/instance?api-version=2023-06-30 &format=Json"
+
+>>GET /metadata/instance
+Output:-Returns set of available/supported API versions.
+{
+  "apiVersions": [
+    "2023-06-29",
+    "2023-06-30",
+    ]
+}
+#For  AWS:-
+>>curl http://169.254.169.254/latest/meta-data/
+
+######################Approach 2################################
+Here we use http request to the instance metadata URL, 
+which is specified using the metadata_url variable. The response body contains the metadata in JSON format.
+
+data "http" "instance_metadata" {
+  url = var.metadata_url
+}
+
+data "external" "json_output" {
+  program = ["echo", "${data.http.instance_metadata.body}"]
+}
+
+output "instance_metadata_json" {
+  value = jsondecode(data.external.json_output.result)
+}
+For Azure:-
+variable "metadata_url" {
+  default = "http://169.254.169.254/metadata/instance?api-version=2021-02-01"
+}
+
+For AWS:-
+variable "metadata_url" {
+  default = "http://169.254.169.254/metadata/instance?api-version=2021-02-01"
+}
+
+
